@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1705.3
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "train-backend-api", "train-backend-api\train-backend-api.csproj", "{36AEE0F3-BD01-4955-83BE-9A965D834BA1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{36AEE0F3-BD01-4955-83BE-9A965D834BA1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{36AEE0F3-BD01-4955-83BE-9A965D834BA1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{36AEE0F3-BD01-4955-83BE-9A965D834BA1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{36AEE0F3-BD01-4955-83BE-9A965D834BA1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {33EE620B-EBFB-468E-B034-670EE68ECE11}
+	EndGlobalSection
+EndGlobal
