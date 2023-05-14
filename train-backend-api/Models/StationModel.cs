@@ -12,5 +12,7 @@ namespace TrainSystem.Models
         public string StationLine { get; set; }
         public string StationLineColor { get; set; }
         public bool IsExtended { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
     }
 }

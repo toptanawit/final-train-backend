@@ -71,7 +71,7 @@ namespace TrainSystem.Controller
         [HttpPost]
         public JsonResult Post(Station station)
         {
-            string query = @"insert into stations (station_id, station_name, station_line, station_linecolor, is_extended) values (@id, @name, @line, @linecolor, @extended) ";
+            string query = @"insert into stations (station_id, station_name, station_line, station_linecolor, is_extended, latitude, longitude) values (@id, @name, @line, @linecolor, @extended, @lat, @long) ";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
@@ -85,6 +85,8 @@ namespace TrainSystem.Controller
                     myCommand.Parameters.AddWithValue("@line", station.StationLine);
                     myCommand.Parameters.AddWithValue("@linecolor", station.StationLineColor);
                     myCommand.Parameters.AddWithValue("@extended", station.IsExtended ? 1 : 0);
+                    myCommand.Parameters.AddWithValue("@lat", station.Latitude);
+                    myCommand.Parameters.AddWithValue("@long", station.Longitude);
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
 
@@ -99,7 +101,7 @@ namespace TrainSystem.Controller
         [HttpPut]
         public JsonResult Put(Station station)
         {
-            string query = @"update stations set station_name = @name, station_line = @line, station_linecolor = @linecolor, is_extended = @extended where station_id = @id";
+            string query = @"update stations set station_name = @name, station_line = @line, station_linecolor = @linecolor, is_extended = @extended, latitude = @lat, longitude = @long where station_id = @id";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
@@ -113,6 +115,8 @@ namespace TrainSystem.Controller
                     myCommand.Parameters.AddWithValue("@line", station.StationLine);
                     myCommand.Parameters.AddWithValue("@linecolor", station.StationLineColor);
                     myCommand.Parameters.AddWithValue("@extended", station.IsExtended ? 1 : 0);
+                    myCommand.Parameters.AddWithValue("@lat", station.Latitude);
+                    myCommand.Parameters.AddWithValue("@long", station.Longitude);
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
 

@@ -93,6 +93,38 @@ namespace TrainSystem.Controller
             return new JsonResult("Added Successfully");
         }
 
+        [HttpPost("{login}")]
+        public JsonResult PostLogin(User user)
+        {
+            string query = @"select * from users where username = @username";
+            DataTable table = new DataTable();
+            string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
+            MySqlDataReader myReader;
+            using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
+            {
+                mycon.Open();
+                using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                {
+                    myCommand.Parameters.AddWithValue("@username", user.Username);
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+
+                    string username = table.Rows[0][0].ToString();
+                    string password = table.Rows[0][1].ToString();
+
+                    if (user.Username == username && user.Password == password)
+                    {
+                        return new JsonResult("Login Successfully!");
+                    }
+
+                    myReader.Close();
+                    mycon.Close();
+                }
+            }
+
+            return new JsonResult("Added Successfully");
+        }
+
         [HttpPut]
         public JsonResult Put(User user)
         {
