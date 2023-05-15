@@ -203,9 +203,9 @@ namespace TrainSystem.Controller
                 //TimeSpan timenow = new TimeSpan(11,5,0);
                 DayOfWeek day = DateTime.Today.DayOfWeek;
                 //DayOfWeek day = DayOfWeek.Sunday;
-                string line = table.Rows[0][4].ToString();
-                string color = table.Rows[0][5].ToString();
-                bool isExtended = (bool)table.Rows[0][6];
+                string line = table.Rows[0][2].ToString();
+                string color = table.Rows[0][3].ToString();
+                bool isExtended = (bool)table.Rows[0][4];
 
                 if (line == "bts")
                 {
@@ -385,7 +385,7 @@ namespace TrainSystem.Controller
                 {
                     if (day != DayOfWeek.Saturday && day != DayOfWeek.Sunday)
                     {
-                        foreach (TimeSpan key in arlHolidayTimetable)
+                        foreach (TimeSpan key in arlTimetable)
                         {
                             if (key > timenow)
                             {
@@ -396,7 +396,7 @@ namespace TrainSystem.Controller
                     }
                     else
                     {
-                        foreach (TimeSpan key in arlTimetable)
+                        foreach (TimeSpan key in arlHolidayTimetable)
                         {
                             if (key > timenow)
                             {
