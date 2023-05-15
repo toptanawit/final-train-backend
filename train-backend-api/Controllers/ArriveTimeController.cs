@@ -203,9 +203,9 @@ namespace TrainSystem.Controller
                 //TimeSpan timenow = new TimeSpan(11,5,0);
                 DayOfWeek day = DateTime.Today.DayOfWeek;
                 //DayOfWeek day = DayOfWeek.Sunday;
-                string line = table.Rows[0][2].ToString();
-                string color = table.Rows[0][3].ToString();
-                bool isExtended = (bool)table.Rows[0][4];
+                string line = table.Rows[0][4].ToString();
+                string color = table.Rows[0][5].ToString();
+                bool isExtended = (bool)table.Rows[0][6];
 
                 if (line == "bts")
                 {

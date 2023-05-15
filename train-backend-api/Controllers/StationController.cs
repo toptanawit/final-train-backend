@@ -71,7 +71,7 @@ namespace TrainSystem.Controller
         [HttpPost]
         public JsonResult Post(Station station)
         {
-            string query = @"insert into stations (station_id, station_name, station_line, station_linecolor, is_extended, latitude, longitude) values (@id, @name, @line, @linecolor, @extended, @lat, @long) ";
+            string query = @"insert into stations (station_id, station_name, latitude, longitude, station_line, station_linecolor, is_extended) values (@id, @name, @lat, @long, @line, @linecolor, @extended) ";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
@@ -101,7 +101,7 @@ namespace TrainSystem.Controller
         [HttpPut]
         public JsonResult Put(Station station)
         {
-            string query = @"update stations set station_name = @name, station_line = @line, station_linecolor = @linecolor, is_extended = @extended, latitude = @lat, longitude = @long where station_id = @id";
+            string query = @"update stations set station_name = @name, latitude = @lat, longitude = @long, station_line = @line, station_linecolor = @linecolor, is_extended = @extended where station_id = @id";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;

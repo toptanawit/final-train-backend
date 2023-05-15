@@ -11,6 +11,7 @@ using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
 using TrainSystem.Models;
+using static System.Collections.Specialized.BitVector32;
 
 namespace TrainSystem.Controller
 {
@@ -160,8 +161,8 @@ namespace TrainSystem.Controller
             new string[] { "N2", "N3" },
             new string[] { "N3", "N4" },
             new string[] { "N4", "N5" },
-            new string[] { "N5", "N6" },
-            new string[] { "N6", "N7" },
+            new string[] { "N5", "N7" },
+
             new string[] { "N7", "N8" },
             new string[] { "N8", "N9" },
             new string[] { "N9", "N10" },
@@ -195,15 +196,15 @@ namespace TrainSystem.Controller
             // west bts
             new string[] { "CEN", "W1" },
             // blue mrt
-            new string[] { "BL1", "BL2" },
-            new string[] { "BL2", "BL3" },
-            new string[] { "BL3", "BL4" },
-            new string[] { "BL4", "BL5" },
-            new string[] { "BL5", "BL6" },
-            new string[] { "BL6", "BL7" },
-            new string[] { "BL7", "BL8" },
-            new string[] { "BL8", "BL9" },
-            new string[] { "BL9", "BL10" },
+            new string[] { "BL01", "BL02" },
+            new string[] { "BL02", "BL03" },
+            new string[] { "BL03", "BL04" },
+            new string[] { "BL04", "BL05" },
+            new string[] { "BL05", "BL06" },
+            new string[] { "BL06", "BL07" },
+            new string[] { "BL07", "BL08" },
+            new string[] { "BL08", "BL09" },
+            new string[] { "BL09", "BL10" },
             new string[] { "BL10", "BL11" },
             new string[] { "BL11", "BL12" },
             new string[] { "BL12", "BL13" },
@@ -227,23 +228,23 @@ namespace TrainSystem.Controller
             new string[] { "BL30", "BL31" },
             new string[] { "BL31", "BL32" },
 
-            new string[] { "BL32", "BL1" },
-            new string[] { "BL33", "BL1" },
+            new string[] { "BL32", "BL01" },
+            new string[] { "BL33", "BL01" },
             new string[] { "BL33", "BL34" },
             new string[] { "BL34", "BL35" },
             new string[] { "BL35", "BL36" },
             new string[] { "BL36", "BL37" },
             new string[] { "BL37", "BL38" },
             // purple mrt
-            new string[] { "PP1", "PP2" },
-            new string[] { "PP2", "PP3" },
-            new string[] { "PP3", "PP4" },
-            new string[] { "PP4", "PP5" },
-            new string[] { "PP5", "PP6" },
-            new string[] { "PP6", "PP7" },
-            new string[] { "PP7", "PP8" },
-            new string[] { "PP8", "PP9" },
-            new string[] { "PP9", "PP10" },
+            new string[] { "PP01", "PP02" },
+            new string[] { "PP02", "PP03" },
+            new string[] { "PP03", "PP04" },
+            new string[] { "PP04", "PP05" },
+            new string[] { "PP05", "PP06" },
+            new string[] { "PP06", "PP07" },
+            new string[] { "PP07", "PP08" },
+            new string[] { "PP08", "PP09" },
+            new string[] { "PP09", "PP10" },
             new string[] { "PP10", "PP11" },
             new string[] { "PP11", "PP12" },
             new string[] { "PP12", "PP13" },
@@ -318,73 +319,91 @@ namespace TrainSystem.Controller
                 }
             }
 
-            List<string> BFS(string start, string end)
+            List<List<string>> FindAllRoutes(string start, string end)
             {
-                var visited = new HashSet<string>();
-                var queue = new Queue<string>();
-                queue.Enqueue(start);
+                List<List<string>> routes = new List<List<string>>();
+                Queue<List<string>> queue = new Queue<List<string>>();
+                HashSet<string> visited = new HashSet<string>();
+
+                queue.Enqueue(new List<string> { start });
 
                 while (queue.Count > 0)
                 {
-                    var station = queue.Dequeue();
-                    var destinations = adjacencyList[station];
+                    List<string> currentPath = queue.Dequeue();
+                    string currentNode = currentPath.Last();
 
-                    foreach (var destination in destinations)
+                    if (currentNode == end)
                     {
-                        if (destination == end)
+                        routes.Add(currentPath);
+                        continue;
+                    }
+
+                    visited.Add(currentNode);
+                    List<string> neighbors = adjacencyList.ContainsKey(currentNode) ? adjacencyList[currentNode] : new List<string>();
+
+                    foreach (string neighbor in neighbors)
+                    {
+                        if (!visited.Contains(neighbor))
                         {
-                            visited.Add(destination);
-                            return new List<string>(visited);
-                        }
-                        if (!visited.Contains(destination))
-                        {
-                            visited.Add(destination);
-                            queue.Enqueue(destination);
+                            List<string> newPath = new List<string>(currentPath);
+                            newPath.Add(neighbor);
+                            queue.Enqueue(newPath);
                         }
                     }
                 }
 
-                List<string> result = new List<string>(visited);
-                return result;
+                return routes;
             }
 
-            List<string> result = BFS(start, end);
-            List<Models.Station> stationsData = new List<Models.Station>();
+            List<List<string>> result = FindAllRoutes(start, end);
+            List<List<Models.Station>> stationsAllData = new List<List<Models.Station>>();
 
-            for (int i=0; i<result.Count; i++)
+            foreach (List<string> routes in result)
             {
-                query = @"select * from stations where station_id = @id";
-                table = new DataTable();
-                using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
+                List<Models.Station> stationsData = new List<Models.Station>();
+                foreach (string route in routes)
                 {
-                    mycon.Open();
-
-                    using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                    query = @"select * from stations where station_id = @id";
+                    table = new DataTable();
+                    using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
                     {
-                        myCommand.Parameters.AddWithValue("@id", result[i]);
-                        myReader = myCommand.ExecuteReader();
-                        table.Load(myReader);
+                        mycon.Open();
 
-                        Models.Station tempStation = new Models.Station();
-                        tempStation.StationId = table.Rows[i][0].ToString();
-                        tempStation.StationName = table.Rows[i][1].ToString();
-                        tempStation.StationLine = table.Rows[i][2].ToString();
-                        tempStation.StationLineColor = table.Rows[i][3].ToString();
-                        tempStation.IsExtended = (bool)table.Rows[i][4];
+                        using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                        {
+                            myCommand.Parameters.AddWithValue("@id", route);
+                            myReader = myCommand.ExecuteReader();
+                            table.Load(myReader);
 
-                        stationsData.Add(tempStation);
+                            Models.Station tempStation = new Models.Station();
+                            tempStation.StationId = table.Rows[0][0].ToString();
+                            tempStation.StationName = table.Rows[0][1].ToString();
+                            tempStation.StationLine = table.Rows[0][2].ToString();
+                            tempStation.StationLineColor = table.Rows[0][3].ToString();
+                            tempStation.IsExtended = (bool)table.Rows[0][4];
+                            tempStation.Latitude = (double)table.Rows[0][5];
+                            tempStation.Longitude = (double)table.Rows[0][6];
 
-                        myReader.Close();
-                        mycon.Close();
+                            stationsData.Add(tempStation);
+
+                            myReader.Close();
+                            mycon.Close();
+                        }
                     }
                 }
+                stationsAllData.Add(stationsData);
             }
 
-            return new JsonResult(stationsData);
+            return new JsonResult(stationsAllData);
         }
 
+
+
+
+
+        // fee
         [HttpGet("fees/{start}-{end}")]
-        public int GetFees(string start, string end)
+        public List<int> GetFees(string start, string end)
         {
             string query = @"select * from stations";
             DataTable table = new DataTable();
@@ -430,273 +449,312 @@ namespace TrainSystem.Controller
                 }
             }
 
-            List<string> BFS(string start, string end)
+            List<List<string>> FindAllRoutes(string start, string end)
             {
-                var visited = new HashSet<string>();
-                var queue = new Queue<string>();
-                queue.Enqueue(start);
+                List<List<string>> routes = new List<List<string>>();
+                Queue<List<string>> queue = new Queue<List<string>>();
+                HashSet<string> visited = new HashSet<string>();
+
+                queue.Enqueue(new List<string> { start });
 
                 while (queue.Count > 0)
                 {
-                    var station = queue.Dequeue();
-                    var destinations = adjacencyList[station];
+                    List<string> currentPath = queue.Dequeue();
+                    string currentNode = currentPath.Last();
 
-                    foreach (var destination in destinations)
+                    if (currentNode == end)
                     {
-                        if (destination == end)
+                        routes.Add(currentPath);
+                        continue;
+                    }
+
+                    visited.Add(currentNode);
+                    List<string> neighbors = adjacencyList.ContainsKey(currentNode) ? adjacencyList[currentNode] : new List<string>();
+
+                    foreach (string neighbor in neighbors)
+                    {
+                        if (!visited.Contains(neighbor))
                         {
-                            visited.Add(destination);
-                            return new List<string>(visited);
-                        }
-                        if (!visited.Contains(destination))
-                        {
-                            visited.Add(destination);
-                            queue.Enqueue(destination);
+                            List<string> newPath = new List<string>(currentPath);
+                            newPath.Add(neighbor);
+                            queue.Enqueue(newPath);
                         }
                     }
                 }
 
-                List<string> result = new List<string>(visited);
-                return result;
+                return routes;
             }
 
-            List<string> result = BFS(start, end);
-            List<Models.Station> stationsData = new List<Models.Station>();
+            List<List<string>> result = FindAllRoutes(start, end);
+            List<List<Models.Station>> stationsAllData = new List<List<Models.Station>>();
 
-            for (int i = 0; i < result.Count; i++)
+            foreach (List<string> routes in result)
             {
-                query = @"select * from stations where station_id = @id";
-                table = new DataTable();
-                using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
+                List<Models.Station> stationsData = new List<Models.Station>();
+                foreach (string route in routes)
                 {
-                    mycon.Open();
-
-                    using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                    query = @"select * from stations where station_id = @id";
+                    table = new DataTable();
+                    using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
                     {
-                        myCommand.Parameters.AddWithValue("@id", result[i]);
-                        myReader = myCommand.ExecuteReader();
-                        table.Load(myReader);
+                        mycon.Open();
 
-                        Models.Station tempStation = new Models.Station();
-                        tempStation.StationId = table.Rows[i][0].ToString();
-                        tempStation.StationName = table.Rows[i][1].ToString();
-                        tempStation.StationLine = table.Rows[i][2].ToString();
-                        tempStation.StationLineColor = table.Rows[i][3].ToString();
-                        tempStation.IsExtended = (bool)table.Rows[i][4];
+                        using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                        {
+                            myCommand.Parameters.AddWithValue("@id", route);
+                            myReader = myCommand.ExecuteReader();
+                            table.Load(myReader);
 
-                        stationsData.Add(tempStation);
+                            Models.Station tempStation = new Models.Station();
+                            tempStation.StationId = table.Rows[0][0].ToString();
+                            tempStation.StationName = table.Rows[0][1].ToString();
+                            tempStation.StationLine = table.Rows[0][2].ToString();
+                            tempStation.StationLineColor = table.Rows[0][3].ToString();
+                            tempStation.IsExtended = (bool)table.Rows[0][4];
+                            tempStation.Latitude = (double)table.Rows[0][5];
+                            tempStation.Longitude = (double)table.Rows[0][6];
 
-                        myReader.Close();
-                        mycon.Close();
+                            stationsData.Add(tempStation);
+
+                            myReader.Close();
+                            mycon.Close();
+                        }
                     }
                 }
+                stationsAllData.Add(stationsData);
             }
 
-            int bCount = 0;
-            int mCount = 0;
-            int mpCount = 0;
-            int aCount = 0;
-            bool extended = false;
-            int fees = 0;
+            List<int> allFees = new List<int>();
 
-            foreach (Models.Station station in stationsData)
+            foreach (List<Models.Station> stations in stationsAllData)
             {
-                if (station.StationLine == "bts")
+                int fees = 0;
+                int bCount = 0;
+                int mCount = 0;
+                int mpCount = 0;
+                int aCount = 0;
+                bool extended = false;
+
+                foreach (Models.Station station in stations)
                 {
-                    bCount += 1;
+                    if (station.StationLine == "bts")
+                    {
+                        bCount += 1;
+                    }
+                    else if (station.StationLine == "bts" && station.IsExtended)
+                    {
+                        bCount += 1;
+                        extended = true;
+                    }
+                    else if (station.StationLine == "mrt" && station.StationLineColor == "blue")
+                    {
+                        mCount += 1;
+                    }
+                    else if (station.StationLine == "mrt" && station.StationLineColor == "purple")
+                    {
+                        mpCount += 1;
+                    }
+                    else
+                    {
+                        aCount += 1;
+                    }
                 }
-                else if (station.StationLine == "bts" && station.IsExtended)
+
+                if (stations[0].StationLine == "bts")
                 {
-                    bCount += 1;
-                    extended = true;
+                    bCount -= 1;
                 }
-                else if (station.StationLine == "mrt" && station.StationLineColor == "blue")
+                else if (stations[0].StationLine == "bts" && stations[0].IsExtended)
                 {
-                    mCount += 1;
+                    bCount -= 1;
                 }
-                else if (station.StationLine == "mrt" && station.StationLineColor == "purple")
+                else if (stations[0].StationLine == "mrt" && stations[0].StationLineColor == "blue")
                 {
-                    mpCount += 1;
+                    mCount -= 1;
+                }
+                else if (stations[0].StationLine == "mrt" && stations[0].StationLineColor == "purple")
+                {
+                    mpCount -= 1;
                 }
                 else
                 {
-                    aCount += 1;
+                    aCount -= 1;
                 }
-            }
 
-            if (bCount == 1)
-            {
-                fees += 16;
-                if (extended) { fees += 1; }
-            }
-            else if (bCount == 2)
-            {
-                fees += 23;
-                if (extended) { fees += 2; }
-            }
-            else if (bCount == 3)
-            {
-                fees += 26;
-                if (extended) { fees += 2; }
-            }
-            else if (bCount == 4)
-            {
-                fees += 30;
-                if (extended) { fees += 2; }
-            }
-            else if (bCount == 5)
-            {
-                fees += 33;
-                if (extended) { fees += 2; }
-            }
-            else if (bCount == 6)
-            {
-                fees += 37;
-                if (extended) { fees += 3; }
-            }
-            else if (bCount == 7)
-            {
-                fees += 40;
-                if (extended) { fees += 3; }
-            }
-            else if (bCount >= 8)
-            {
-                fees += 44;
-                if (extended) { fees += 3; }
-            }
-
-
-
-            if (mCount == 1)
-            {
-                fees += 16;
-            }
-            else if (mCount == 2)
-            {
-                fees += 19;
-            }
-            else if (mCount == 3)
-            {
-                fees += 21;
-            }
-            else if (mCount == 4)
-            {
-                fees += 23;
-            }
-            else if (mCount == 5)
-            {
-                fees += 25;
-            }
-            else if (mCount == 6)
-            {
-                fees += 28;
-            }
-            else if (mCount == 7)
-            {
-                fees += 30;
-            }
-            else if (mCount == 8)
-            {
-                fees += 32;
-            }
-            else if (mCount == 9)
-            {
-                fees += 35;
-            }
-            else if (mCount == 10)
-            {
-                fees += 37;
-            }
-            else if (mCount == 11)
-            {
-                fees += 39;
-            }
-            else if (mCount >= 12)
-            {
-                fees += 42;
-            }
+                if (bCount == 1)
+                {
+                    fees += 16;
+                    if (extended) { fees += 1; }
+                }
+                else if (bCount == 2)
+                {
+                    fees += 23;
+                    if (extended) { fees += 2; }
+                }
+                else if (bCount == 3)
+                {
+                    fees += 26;
+                    if (extended) { fees += 2; }
+                }
+                else if (bCount == 4)
+                {
+                    fees += 30;
+                    if (extended) { fees += 2; }
+                }
+                else if (bCount == 5)
+                {
+                    fees += 33;
+                    if (extended) { fees += 2; }
+                }
+                else if (bCount == 6)
+                {
+                    fees += 37;
+                    if (extended) { fees += 3; }
+                }
+                else if (bCount == 7)
+                {
+                    fees += 40;
+                    if (extended) { fees += 3; }
+                }
+                else if (bCount >= 8)
+                {
+                    fees += 44;
+                    if (extended) { fees += 3; }
+                }
 
 
 
-            if (mpCount == 1)
-            {
-                fees += 17;
-            }
-            else if (mpCount == 2)
-            {
-                fees += 20;
-            }
-            else if (mpCount == 3)
-            {
-                fees += 23;
-            }
-            else if (mpCount == 4)
-            {
-                fees += 25;
-            }
-            else if (mpCount == 5)
-            {
-                fees += 27;
-            }
-            else if (mpCount == 6)
-            {
-                fees += 30;
-            }
-            else if (mpCount == 7)
-            {
-                fees += 33;
-            }
-            else if (mpCount == 8)
-            {
-                fees += 36;
-            }
-            else if (mpCount == 9)
-            {
-                fees += 38;
-            }
-            else if (mpCount == 10)
-            {
-                fees += 40;
-            }
-            else if (mpCount >= 11)
-            {
-                fees += 42;
-            }
+                if (mCount == 1)
+                {
+                    fees += 16;
+                }
+                else if (mCount == 2)
+                {
+                    fees += 19;
+                }
+                else if (mCount == 3)
+                {
+                    fees += 21;
+                }
+                else if (mCount == 4)
+                {
+                    fees += 23;
+                }
+                else if (mCount == 5)
+                {
+                    fees += 25;
+                }
+                else if (mCount == 6)
+                {
+                    fees += 28;
+                }
+                else if (mCount == 7)
+                {
+                    fees += 30;
+                }
+                else if (mCount == 8)
+                {
+                    fees += 32;
+                }
+                else if (mCount == 9)
+                {
+                    fees += 35;
+                }
+                else if (mCount == 10)
+                {
+                    fees += 37;
+                }
+                else if (mCount == 11)
+                {
+                    fees += 39;
+                }
+                else if (mCount >= 12)
+                {
+                    fees += 42;
+                }
 
 
 
-            if (aCount == 1)
-            {
-                fees += 15;
-            }
-            else if (aCount == 2)
-            {
-                fees += 20;
-            }
-            else if (aCount == 3)
-            {
-                fees += 25;
-            }
-            else if (aCount == 4)
-            {
-                fees += 30;
-            }
-            else if (aCount == 5)
-            {
-                fees += 35;
-            }
-            else if (aCount == 6)
-            {
-                fees += 40;
-            }
-            else if (aCount == 7)
-            {
-                fees += 45;
-            }
+                if (mpCount == 1)
+                {
+                    fees += 17;
+                }
+                else if (mpCount == 2)
+                {
+                    fees += 20;
+                }
+                else if (mpCount == 3)
+                {
+                    fees += 23;
+                }
+                else if (mpCount == 4)
+                {
+                    fees += 25;
+                }
+                else if (mpCount == 5)
+                {
+                    fees += 27;
+                }
+                else if (mpCount == 6)
+                {
+                    fees += 30;
+                }
+                else if (mpCount == 7)
+                {
+                    fees += 33;
+                }
+                else if (mpCount == 8)
+                {
+                    fees += 36;
+                }
+                else if (mpCount == 9)
+                {
+                    fees += 38;
+                }
+                else if (mpCount == 10)
+                {
+                    fees += 40;
+                }
+                else if (mpCount >= 11)
+                {
+                    fees += 42;
+                }
 
 
 
-            return fees;
+                if (aCount == 1)
+                {
+                    fees += 15;
+                }
+                else if (aCount == 2)
+                {
+                    fees += 20;
+                }
+                else if (aCount == 3)
+                {
+                    fees += 25;
+                }
+                else if (aCount == 4)
+                {
+                    fees += 30;
+                }
+                else if (aCount == 5)
+                {
+                    fees += 35;
+                }
+                else if (aCount == 6)
+                {
+                    fees += 40;
+                }
+                else if (aCount == 7)
+                {
+                    fees += 45;
+                }
+
+                allFees.Add(fees);
+            }
+
+            return allFees;
         }
     }
 }
