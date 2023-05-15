@@ -414,14 +414,149 @@ namespace TrainSystem.Controller
         public List<string> stations = new List<string>();
 
         public List<string[]> routes = new List<string[]> {
-            new string[] { "e12", "e4" }
-            // add more
+            // east bts
+            new string[] { "CEN", "E1" },
+            new string[] { "E1", "E2" },
+            new string[] { "E2", "E3" },
+            new string[] { "E3", "E4" },
+            new string[] { "E4", "E5" },
+            new string[] { "E5", "E6" },
+            new string[] { "E6", "E7" },
+            new string[] { "E7", "E8" },
+            new string[] { "E8", "E9" },
+            new string[] { "E9", "E10" },
+            new string[] { "E10", "E11" },
+            new string[] { "E11", "E12" },
+            new string[] { "E12", "E13" },
+            new string[] { "E13", "E14" },
+            new string[] { "E14", "E15" },
+            new string[] { "E15", "E16" },
+            new string[] { "E16", "E17" },
+            new string[] { "E17", "E18" },
+            new string[] { "E18", "E19" },
+            new string[] { "E19", "E20" },
+            new string[] { "E20", "E21" },
+            new string[] { "E21", "E22" },
+            new string[] { "E22", "E23" },
+            // north bts
+            new string[] { "CEN", "N1" },
+            new string[] { "N1", "N2" },
+            new string[] { "N2", "N3" },
+            new string[] { "N3", "N4" },
+            new string[] { "N4", "N5" },
+            new string[] { "N5", "N7" },
+
+            new string[] { "N7", "N8" },
+            new string[] { "N8", "N9" },
+            new string[] { "N9", "N10" },
+            new string[] { "N10", "N11" },
+            new string[] { "N11", "N12" },
+            new string[] { "N12", "N13" },
+            new string[] { "N13", "N14" },
+            new string[] { "N14", "N15" },
+            new string[] { "N15", "N16" },
+            new string[] { "N16", "N17" },
+            new string[] { "N17", "N18" },
+            new string[] { "N18", "N19" },
+            new string[] { "N19", "N20" },
+            new string[] { "N20", "N21" },
+            new string[] { "N21", "N22" },
+            new string[] { "N22", "N23" },
+            new string[] { "N23", "N24" },
+            // south bts
+            new string[] { "CEN", "S1" },
+            new string[] { "S1", "S2" },
+            new string[] { "S2", "S3" },
+            new string[] { "S3", "S4" },
+            new string[] { "S4", "S5" },
+            new string[] { "S5", "S6" },
+            new string[] { "S6", "S7" },
+            new string[] { "S7", "S8" },
+            new string[] { "S8", "S9" },
+            new string[] { "S9", "S10" },
+            new string[] { "S10", "S11" },
+            new string[] { "S11", "S12" },
+            // west bts
+            new string[] { "CEN", "W1" },
+            // blue mrt
+            new string[] { "BL01", "BL02" },
+            new string[] { "BL02", "BL03" },
+            new string[] { "BL03", "BL04" },
+            new string[] { "BL04", "BL05" },
+            new string[] { "BL05", "BL06" },
+            new string[] { "BL06", "BL07" },
+            new string[] { "BL07", "BL08" },
+            new string[] { "BL08", "BL09" },
+            new string[] { "BL09", "BL10" },
+            new string[] { "BL10", "BL11" },
+            new string[] { "BL11", "BL12" },
+            new string[] { "BL12", "BL13" },
+            new string[] { "BL13", "BL14" },
+            new string[] { "BL14", "BL15" },
+            new string[] { "BL15", "BL16" },
+            new string[] { "BL16", "BL17" },
+            new string[] { "BL17", "BL18" },
+            new string[] { "BL18", "BL19" },
+            new string[] { "BL19", "BL20" },
+            new string[] { "BL20", "BL21" },
+            new string[] { "BL21", "BL22" },
+            new string[] { "BL22", "BL23" },
+            new string[] { "BL23", "BL24" },
+            new string[] { "BL24", "BL25" },
+            new string[] { "BL25", "BL26" },
+            new string[] { "BL26", "BL27" },
+            new string[] { "BL27", "BL28" },
+            new string[] { "BL28", "BL29" },
+            new string[] { "BL29", "BL30" },
+            new string[] { "BL30", "BL31" },
+            new string[] { "BL31", "BL32" },
+
+            new string[] { "BL32", "BL01" },
+            new string[] { "BL33", "BL01" },
+            new string[] { "BL33", "BL34" },
+            new string[] { "BL34", "BL35" },
+            new string[] { "BL35", "BL36" },
+            new string[] { "BL36", "BL37" },
+            new string[] { "BL37", "BL38" },
+            // purple mrt
+            new string[] { "PP01", "PP02" },
+            new string[] { "PP02", "PP03" },
+            new string[] { "PP03", "PP04" },
+            new string[] { "PP04", "PP05" },
+            new string[] { "PP05", "PP06" },
+            new string[] { "PP06", "PP07" },
+            new string[] { "PP07", "PP08" },
+            new string[] { "PP08", "PP09" },
+            new string[] { "PP09", "PP10" },
+            new string[] { "PP10", "PP11" },
+            new string[] { "PP11", "PP12" },
+            new string[] { "PP12", "PP13" },
+            new string[] { "PP13", "PP14" },
+            new string[] { "PP14", "PP15" },
+            new string[] { "PP15", "PP16" },
+            // arl
+            new string[] { "A1", "A2" },
+            new string[] { "A2", "A3" },
+            new string[] { "A3", "A4" },
+            new string[] { "A4", "A5" },
+            new string[] { "A5", "A6" },
+            new string[] { "A6", "A7" },
+            new string[] { "A7", "A8" },
+            // intersect
+            new string[] { "E4", "BL22" },
+            new string[] { "A6", "BL21" },
+            new string[] { "S2", "BL26" },
+            new string[] { "N8", "BL13" },
+            new string[] { "N9", "BL14" },
+            new string[] { "PP16", "BL10" },
+            new string[] { "S12", "BL34" },
+            new string[] { "N2", "A8" }
         };
 
         public Dictionary<string, List<String>> adjacencyList = new Dictionary<String, List<String>>();
 
         [HttpGet("time/{start}-{end}")]
-        public TimeSpan GetEstimatedTime(string start, string end)
+        public List<TimeSpan> GetEstimatedTime(string start, string end)
         {
             string query = @"select * from stations";
             DataTable table = new DataTable();
@@ -467,129 +602,159 @@ namespace TrainSystem.Controller
                 }
             }
 
-            List<string> BFS(string start, string end)
+            List<List<string>> FindAllRoutes(string start, string end)
             {
-                var visited = new HashSet<string>();
-                var queue = new Queue<string>();
-                queue.Enqueue(start);
+                List<List<string>> routes = new List<List<string>>();
+                Queue<List<string>> queue = new Queue<List<string>>();
+                HashSet<string> visited = new HashSet<string>();
+
+                queue.Enqueue(new List<string> { start });
 
                 while (queue.Count > 0)
                 {
-                    var station = queue.Dequeue();
-                    var destinations = adjacencyList[station];
+                    List<string> currentPath = queue.Dequeue();
+                    string currentNode = currentPath.Last();
 
-                    foreach (var destination in destinations)
+                    if (currentNode == end)
                     {
-                        if (destination == end)
+                        routes.Add(currentPath);
+                        continue;
+                    }
+
+                    visited.Add(currentNode);
+                    List<string> neighbors = adjacencyList.ContainsKey(currentNode) ? adjacencyList[currentNode] : new List<string>();
+
+                    foreach (string neighbor in neighbors)
+                    {
+                        if (!visited.Contains(neighbor))
                         {
-                            visited.Add(destination);
-                            return new List<string>(visited);
+                            List<string> newPath = new List<string>(currentPath);
+                            newPath.Add(neighbor);
+                            queue.Enqueue(newPath);
                         }
-                        if (!visited.Contains(destination))
+                    }
+                }
+
+                return routes;
+            }
+
+            List<List<string>> result = FindAllRoutes(start, end);
+            List<List<Models.Station>> stationsAllData = new List<List<Models.Station>>();
+
+            foreach (List<string> routes in result)
+            {
+                List<Models.Station> stationsData = new List<Models.Station>();
+                foreach (string route in routes)
+                {
+                    query = @"select * from stations where station_id = @id";
+                    table = new DataTable();
+                    using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
+                    {
+                        mycon.Open();
+
+                        using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
                         {
-                            visited.Add(destination);
-                            queue.Enqueue(destination);
+                            myCommand.Parameters.AddWithValue("@id", route);
+                            myReader = myCommand.ExecuteReader();
+                            table.Load(myReader);
+
+                            Models.Station tempStation = new Models.Station();
+                            tempStation.StationId = table.Rows[0][0].ToString();
+                            tempStation.StationName = table.Rows[0][1].ToString();
+                            tempStation.StationLine = table.Rows[0][2].ToString();
+                            tempStation.StationLineColor = table.Rows[0][3].ToString();
+                            tempStation.IsExtended = (bool)table.Rows[0][4];
+                            tempStation.Latitude = (double)table.Rows[0][5];
+                            tempStation.Longitude = (double)table.Rows[0][6];
+
+                            stationsData.Add(tempStation);
+
+                            myReader.Close();
+                            mycon.Close();
+                        }
+                    }
+                }
+                stationsAllData.Add(stationsData);
+            }
+
+            List<TimeSpan> allTotalTime = new List<TimeSpan>();
+
+            foreach (List<Models.Station> stations in stationsAllData)
+            {
+                int bCount = 0;
+                int mCount = 0;
+                int mpCount = 0;
+
+                foreach (Models.Station station in stations)
+                {
+                    if (station.StationLine == "bts")
+                    {
+                        bCount += 1;
+                    }
+                    else if (station.StationLine == "bts" && station.IsExtended)
+                    {
+                        bCount += 1;
+                    }
+                    else if (station.StationLine == "mrt" && station.StationLineColor == "blue")
+                    {
+                        mCount += 1;
+                    }
+                    else if (station.StationLine == "mrt" && station.StationLineColor == "purple")
+                    {
+                        mpCount += 1;
+                    }
+                }
+
+                if (stations[0].StationLine == "bts")
+                {
+                    bCount -= 1;
+                }
+                else if (stations[0].StationLine == "bts" && stations[0].IsExtended)
+                {
+                    bCount -= 1;
+                }
+                else if (stations[0].StationLine == "mrt" && stations[0].StationLineColor == "blue")
+                {
+                    mCount -= 1;
+                }
+                else if (stations[0].StationLine == "mrt" && stations[0].StationLineColor == "purple")
+                {
+                    mpCount -= 1;
+                }
+
+                TimeSpan timenow = DateTime.Now.TimeOfDay;
+                TimeSpan totalTime = new TimeSpan(0, 0, 0);
+
+                foreach (TimeSpan key in timetable.Keys)
+                {
+                    if (timenow > key)
+                    {
+                        totalTime = new TimeSpan(0, 0, 0);
+                        for (int i = 0; i < bCount; i++)
+                        {
+                            totalTime += timetable[key];
                         }
                     }
                 }
 
-                List<string> result = new List<string>(visited);
-                return result;
-            }
+                TimeSpan temp = totalTime;
 
-            List<string> result = BFS(start, end);
-            List<Models.Station> stationsData = new List<Models.Station>();
-
-            for (int i = 0; i < result.Count; i++)
-            {
-                query = @"select * from stations where station_id = @id";
-                table = new DataTable();
-                using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
+                foreach (TimeSpan key in blueTimetable.Keys)
                 {
-                    mycon.Open();
-
-                    using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                    if (timenow > key)
                     {
-                        myCommand.Parameters.AddWithValue("@id", result[i]);
-                        myReader = myCommand.ExecuteReader();
-                        table.Load(myReader);
-
-                        Models.Station tempStation = new Models.Station();
-                        tempStation.StationId = table.Rows[i][0].ToString();
-                        tempStation.StationName = table.Rows[i][1].ToString();
-                        tempStation.StationLine = table.Rows[i][2].ToString();
-                        tempStation.StationLineColor = table.Rows[i][3].ToString();
-                        tempStation.IsExtended = (bool)table.Rows[i][4];
-
-                        stationsData.Add(tempStation);
-
-                        myReader.Close();
-                        mycon.Close();
+                        totalTime = temp;
+                        for (int i = 0; i < mCount; i++)
+                        {
+                            totalTime += blueTimetable[key];
+                        }
                     }
                 }
+
+                allTotalTime.Add(totalTime);
             }
 
-            int bCount = 0;
-            int mCount = 0;
-            int mpCount = 0;
-            int aCount = 0;
-
-            foreach (Models.Station station in stationsData)
-            {
-                if (station.StationLine == "bts")
-                {
-                    bCount += 1;
-                }
-                else if (station.StationLine == "bts" && station.IsExtended)
-                {
-                    bCount += 1;
-                }
-                else if (station.StationLine == "mrt" && station.StationLineColor == "blue")
-                {
-                    mCount += 1;
-                }
-                else if (station.StationLine == "mrt" && station.StationLineColor == "purple")
-                {
-                    mpCount += 1;
-                }
-                else
-                {
-                    aCount += 1;
-                }
-            }
-
-            TimeSpan timenow = DateTime.Now.TimeOfDay;
-            TimeSpan totalTime = new TimeSpan(0, 0, 0);
-
-            foreach (TimeSpan key in timetable.Keys)
-            {
-                if (timenow > key)
-                {
-                    totalTime = new TimeSpan(0, 0, 0);
-                    for (int i = 0; i < bCount; i++)
-                    {
-                        totalTime += timetable[key];
-                    }
-                }
-            }
-
-            TimeSpan temp = totalTime;
-
-            foreach (TimeSpan key in blueTimetable.Keys)
-            {
-                if (timenow > key)
-                {
-                    totalTime = temp;
-                    for (int i=0; i<mCount; i++)
-                    {
-                        totalTime += blueTimetable[key];
-                    }
-                }
-            }
-
-            // cant calculate arl time
-
-            return totalTime;
+            return allTotalTime;
         }
     }
 }
