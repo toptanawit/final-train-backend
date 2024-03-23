@@ -110,7 +110,6 @@ namespace TrainSystem.Controller
         public string AddStationDensityRecord(StationDensity data)
         {
             string query = @"insert into density_station_new (user_id, station_id, status) values (@user_id, @station_id, @status)";
-            DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
@@ -122,14 +121,22 @@ namespace TrainSystem.Controller
                     myCommand.Parameters.AddWithValue("@station_id", data.station_id);
                     myCommand.Parameters.AddWithValue("@status", data.status);
                     myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
 
                     myReader.Close();
                     mycon.Close();
+
+                    int rowsAffected = myCommand.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return "Data added successfully";
+                    }
+                    else
+                    {
+                        return "Failed to add data";
+                    }
                 }
             }
-
-            return "add data successfully";
         }
 
         [Route("station-update")]
@@ -137,7 +144,6 @@ namespace TrainSystem.Controller
         public string UpdateStationDensityRecord(StationDensity data)
         {
             string query = @"update density_station_new set status = @status where user_id = @user_id and station_id = @station_id";
-            DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
@@ -149,14 +155,22 @@ namespace TrainSystem.Controller
                     myCommand.Parameters.AddWithValue("@station_id", data.station_id);
                     myCommand.Parameters.AddWithValue("@status", data.status);
                     myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
 
                     myReader.Close();
                     mycon.Close();
+
+                    int rowsAffected = myCommand.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return "Data updated successfully";
+                    }
+                    else
+                    {
+                        return "Failed to update data";
+                    }
                 }
             }
-
-            return "update data successfully";
         }
 
         [Route("station-delete")]
@@ -164,7 +178,6 @@ namespace TrainSystem.Controller
         public string DeleteStationDensityRecord(StationDensity data)
         {
             string query = @"delete from density_station_new where user_id = @user_id";
-            DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
@@ -174,19 +187,27 @@ namespace TrainSystem.Controller
                 {
                     myCommand.Parameters.AddWithValue("@user_id", data.user_id);
                     myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
 
                     myReader.Close();
                     mycon.Close();
+
+                    int rowsAffected = myCommand.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return "Data deleted successfully";
+                    }
+                    else
+                    {
+                        return "Failed to delete data";
+                    }
                 }
             }
-
-            return "delete data successfully";
         }
 
         [Route("station-calculate-density")]
         [HttpPost]
-        public string CalculateStaionDensity(string station_id, string station_linecolor)
+        public JsonResult CalculateStaionDensity(string station_id, string station_linecolor)
         {
             string query = @"select * from density_station_new where station_id = @station_id";
             DataTable table = new DataTable();
@@ -211,18 +232,24 @@ namespace TrainSystem.Controller
             string result = "no data";
 
             if (passengers <= threshold / 2) {
-                result = $"passenger density at {station_id} is low. {passengers} {threshold}";
+                result = "low";
             }
             else if (passengers <= threshold)
             {
-                result = $"passenger density at {station_id} is medium. {passengers} {threshold}";
+                result = "medium";
             }
             else
             {
-                result = $"passenger density at {station_id} is high. {passengers} {threshold}";
+                result = "high";
             }
 
-            return result;
+            var jsonData = new
+            {
+                station_id = station_id,
+                result = result,
+            };
+
+            return new JsonResult(jsonData);
         }
 
         // parking lot
@@ -231,7 +258,6 @@ namespace TrainSystem.Controller
         public string AddParkingLotDensityRecord(ParkingLotDensity data)
         {
             string query = @"insert into density_parkinglot_new (user_id, parking_id, vehicle, status) values (@user_id, @parking_id, @vehicle, @status)";
-            DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
@@ -244,14 +270,22 @@ namespace TrainSystem.Controller
                     myCommand.Parameters.AddWithValue("@vehicle", data.vehicle);
                     myCommand.Parameters.AddWithValue("@status", data.status);
                     myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
 
                     myReader.Close();
                     mycon.Close();
+
+                    int rowsAffected = myCommand.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return "Data added successfully";
+                    }
+                    else
+                    {
+                        return "Failed to add data";
+                    }
                 }
             }
-
-            return "add data successfully";
         }
 
         [Route("parkinglot-update")]
@@ -259,7 +293,6 @@ namespace TrainSystem.Controller
         public string UpdateParkingLotDensityRecord(ParkingLotDensity data)
         {
             string query = @"update density_parkinglot_new set status = @status where user_id = @user_id and parking_id = @parking_id";
-            DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
@@ -271,14 +304,22 @@ namespace TrainSystem.Controller
                     myCommand.Parameters.AddWithValue("@parking_id", data.parking_id);
                     myCommand.Parameters.AddWithValue("@status", data.status);
                     myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
 
                     myReader.Close();
                     mycon.Close();
+
+                    int rowsAffected = myCommand.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return "Data updated successfully";
+                    }
+                    else
+                    {
+                        return "Failed to update data";
+                    }
                 }
             }
-
-            return "update data successfully";
         }
 
         [Route("parkinglot-delete")]
@@ -286,7 +327,6 @@ namespace TrainSystem.Controller
         public string DeleteParkingLotDensityRecord(ParkingLotDensity data)
         {
             string query = @"delete from density_parkinglot_new where user_id = @user_id";
-            DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
@@ -296,21 +336,29 @@ namespace TrainSystem.Controller
                 {
                     myCommand.Parameters.AddWithValue("@user_id", data.user_id);
                     myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
 
                     myReader.Close();
                     mycon.Close();
+
+                    int rowsAffected = myCommand.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return "Data deleted successfully";
+                    }
+                    else
+                    {
+                        return "Failed to delete data";
+                    }
                 }
             }
-
-            return "delete data successfully";
         }
 
         [Route("parkinglot-calculate-density")]
         [HttpPost]
-        public string CalculateParkingLotDensity(string parking_id, int lot, string vehicle)
+        public JsonResult CalculateParkingLotDensity(string parking_id, int lot, string vehicle)
         {
-            string query = @"select * from density_station_new where station_id = @station_id and vehicle = @vehicle";
+            string query = @"select * from density_parkinglot_new where parking_id = @parking_id and vehicle = @vehicle";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
@@ -335,18 +383,25 @@ namespace TrainSystem.Controller
 
             if (passengers <= threshold / 2)
             {
-                result = $"passenger density at {parking_id} is low. {passengers} {threshold}";
+                result = "low";
             }
             else if (passengers <= threshold)
             {
-                result = $"passenger density at {parking_id} is medium. {passengers} {threshold}";
+                result = "medium";
             }
             else
             {
-                result = $"passenger density at {parking_id} is high. {passengers} {threshold}";
+                result = "high";
             }
 
-            return result;
+            var jsonData = new
+            {
+                parking_id = parking_id,
+                vehicle = vehicle,
+                result = result,
+            };
+
+            return new JsonResult(jsonData);
         }
     }
 }
