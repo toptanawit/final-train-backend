@@ -11,7 +11,6 @@ using System.Threading.Tasks;
 using TrainSystem.Models;
 
 
-
 namespace TrainSystem.Controller
 {
     [Route("api/[controller]")]
@@ -411,6 +410,403 @@ namespace TrainSystem.Controller
             return waitingTime;
         }
 
+        [HttpGet("all")]
+        public JsonResult GetAllArrivingTime()
+        {
+            TimeSpan intervalTime = new TimeSpan(0, 0, 0);
+
+            TimeSpan btsLightExDayTime = new TimeSpan(0, 0, 0);
+            TimeSpan btsLightDayTime = new TimeSpan(0, 0, 0);
+            TimeSpan btsDarkDayTime = new TimeSpan(0, 0, 0);
+            TimeSpan btsLightExEndTime = new TimeSpan(0, 0, 0);
+            TimeSpan btsLightEndTime = new TimeSpan(0, 0, 0);
+            TimeSpan btsDarkEndTime = new TimeSpan(0, 0, 0);
+
+            TimeSpan mrtBlueTime = new TimeSpan(0, 0, 0);
+            TimeSpan mrtPurpleDayTime = new TimeSpan(0, 0, 0);
+            TimeSpan mrtPurpleEndTime = new TimeSpan(0, 0, 0);
+
+            TimeSpan arlDayTime = new TimeSpan(0, 0, 0);
+            TimeSpan arlEndTime = new TimeSpan(0, 0, 0);
+
+            TimeSpan timenow = DateTime.Now.TimeOfDay;
+
+            foreach (TimeSpan key in extendedTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = extendedTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    btsLightExDayTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in timetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = timetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    btsLightDayTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in darkgreenTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = darkgreenTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    btsDarkDayTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in holidayExtendedTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = holidayExtendedTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    btsLightExEndTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in holidayTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = holidayTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    btsLightEndTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in holidayDarkgreenTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = holidayDarkgreenTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    btsDarkEndTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in blueTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = blueTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    mrtBlueTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in purpleTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = purpleTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    mrtPurpleDayTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in holidayPurpleTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = holidayPurpleTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    mrtPurpleEndTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in arlTimetable)
+            {
+                if (key > timenow)
+                {
+                    arlDayTime = key - timenow;
+                    break;
+                }
+            }
+
+            foreach (TimeSpan key in arlHolidayTimetable)
+            {
+                if (key > timenow)
+                {
+                    arlEndTime = key - timenow;
+                    break;
+                }
+            }
+
+            Dictionary<string, TimeSpan> allTime = new Dictionary<string, TimeSpan>()
+            {
+                { "btsLightExDayTime", btsLightExDayTime },
+                { "btsLightDayTime", btsLightDayTime },
+                { "btsDarkDayTime", btsDarkDayTime },
+                { "btsLightExEndTime", btsLightExEndTime },
+                { "btsLightEndTime", btsLightEndTime },
+                { "btsDarkEndTime", btsDarkEndTime },
+                { "mrtBlueTime", mrtBlueTime },
+                { "mrtPurpleDayTime", mrtPurpleDayTime },
+                { "mrtPurpleEndTime", mrtPurpleEndTime },
+                { "arlDayTime", arlDayTime },
+                { "arlEndTime", arlEndTime }
+            };
+
+            return new JsonResult(allTime);
+        }
+
+        [HttpGet("all2")]
+        public JsonResult GetAllArrivingTime2()
+        {
+            TimeSpan intervalTime = new TimeSpan(0, 0, 0);
+
+            TimeSpan btsLightExDayTime = new TimeSpan(0, 0, 0);
+            TimeSpan btsLightDayTime = new TimeSpan(0, 0, 0);
+            TimeSpan btsDarkDayTime = new TimeSpan(0, 0, 0);
+            TimeSpan btsLightExEndTime = new TimeSpan(0, 0, 0);
+            TimeSpan btsLightEndTime = new TimeSpan(0, 0, 0);
+            TimeSpan btsDarkEndTime = new TimeSpan(0, 0, 0);
+
+            TimeSpan mrtBlueTime = new TimeSpan(0, 0, 0);
+            TimeSpan mrtPurpleDayTime = new TimeSpan(0, 0, 0);
+            TimeSpan mrtPurpleEndTime = new TimeSpan(0, 0, 0);
+
+            TimeSpan arlDayTime = new TimeSpan(0, 0, 0);
+            TimeSpan arlEndTime = new TimeSpan(0, 0, 0);
+
+            TimeSpan timenow = DateTime.Now.TimeOfDay;
+            DayOfWeek day = DateTime.Today.DayOfWeek;
+
+            foreach (TimeSpan key in extendedTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = extendedTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    btsLightExDayTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in timetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = timetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    btsLightDayTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in darkgreenTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = darkgreenTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    btsDarkDayTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in holidayExtendedTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = holidayExtendedTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    btsLightExEndTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in holidayTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = holidayTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    btsLightEndTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in holidayDarkgreenTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = holidayDarkgreenTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    btsDarkEndTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in blueTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = blueTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    mrtBlueTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in purpleTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = purpleTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    mrtPurpleDayTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in holidayPurpleTimetable.Keys)
+            {
+                if (timenow > key)
+                {
+                    intervalTime = holidayPurpleTimetable[key];
+
+                    TimeSpan temp = key;
+                    while (temp < timenow)
+                    {
+                        temp += intervalTime;
+                    }
+                    mrtPurpleEndTime = temp - timenow;
+                }
+            }
+
+            foreach (TimeSpan key in arlTimetable)
+            {
+                if (key > timenow)
+                {
+                    arlDayTime = key - timenow;
+                    break;
+                }
+            }
+
+            foreach (TimeSpan key in arlHolidayTimetable)
+            {
+                if (key > timenow)
+                {
+                    arlEndTime = key - timenow;
+                    break;
+                }
+            }
+
+            Dictionary<string, TimeSpan> allTime = new Dictionary<string, TimeSpan>();
+
+            if (day != DayOfWeek.Saturday && day != DayOfWeek.Sunday)
+            {
+                allTime = new Dictionary<string, TimeSpan>()
+                {
+                    { "btsLightExTime", btsLightExDayTime },
+                    { "btsLightTime", btsLightDayTime },
+                    { "btsDarkTime", btsDarkDayTime },
+                    { "mrtBlueTime", mrtBlueTime },
+                    { "mrtPurpleTime", mrtPurpleDayTime },
+                    { "arlTime", arlDayTime },
+                };
+            }
+            else
+            {
+                allTime = new Dictionary<string, TimeSpan>()
+                {
+                    { "btsLightExTime", btsLightExEndTime },
+                    { "btsLightTime", btsLightEndTime },
+                    { "btsDarkTime", btsDarkEndTime },
+                    { "mrtBlueTime", mrtBlueTime },
+                    { "mrtPurpleTime", mrtPurpleEndTime },
+                    { "arlTime", arlEndTime },
+                };
+            }
+
+            return new JsonResult(allTime);
+        }
+
         public List<string> stations = new List<string>();
 
         public List<string[]> routes = new List<string[]> {
@@ -756,5 +1152,8 @@ namespace TrainSystem.Controller
 
             return allTotalTime;
         }
+
+        //int test = GlobalFunction.test();
+
     }
 }

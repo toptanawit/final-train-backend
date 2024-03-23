@@ -540,11 +540,7 @@ namespace TrainSystem.Controller
                     if (station.StationLine == "bts")
                     {
                         bCount += 1;
-                    }
-                    else if (station.StationLine == "bts" && station.IsExtended)
-                    {
-                        bCount += 1;
-                        extended = true;
+                        if (station.IsExtended) { extended = true; }
                     }
                     else if (station.StationLine == "mrt" && station.StationLineColor == "blue")
                     {
