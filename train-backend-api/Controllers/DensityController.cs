@@ -209,7 +209,7 @@ namespace TrainSystem.Controller
         [HttpPost]
         public JsonResult CalculateStaionDensity(string station_id, string station_linecolor)
         {
-            string query = @"select * from density_station_new where station_id = @station_id";
+            string query = @"select * from density_station_new where station_id = @station_id and status = true";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
@@ -358,7 +358,7 @@ namespace TrainSystem.Controller
         [HttpPost]
         public JsonResult CalculateParkingLotDensity(string parking_id, int lot, string vehicle)
         {
-            string query = @"select * from density_parkinglot_new where parking_id = @parking_id and vehicle = @vehicle";
+            string query = @"select * from density_parkinglot_new where parking_id = @parking_id and vehicle = @vehicle and status = true";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
