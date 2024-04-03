@@ -125,16 +125,7 @@ namespace TrainSystem.Controller
                     myReader.Close();
                     mycon.Close();
 
-                    int rowsAffected = myCommand.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
-                    {
-                        return "Data added successfully";
-                    }
-                    else
-                    {
-                        return "Failed to add data";
-                    }
+                    return "Data added successfully";
                 }
             }
         }
@@ -143,7 +134,7 @@ namespace TrainSystem.Controller
         [HttpPut]
         public string UpdateStationDensityRecord(StationDensity data)
         {
-            string query = @"update density_station_new set status = @status where user_id = @user_id and station_id = @station_id";
+            string query = @"update density_station_new set station_id = @station_id, status = @status where user_id = @user_id";
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
@@ -159,16 +150,7 @@ namespace TrainSystem.Controller
                     myReader.Close();
                     mycon.Close();
 
-                    int rowsAffected = myCommand.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
-                    {
-                        return "Data updated successfully";
-                    }
-                    else
-                    {
-                        return "Failed to update data";
-                    }
+                    return "Data updated successfully";
                 }
             }
         }
@@ -193,14 +175,7 @@ namespace TrainSystem.Controller
 
                     int rowsAffected = myCommand.ExecuteNonQuery();
 
-                    if (rowsAffected > 0)
-                    {
-                        return "Data deleted successfully";
-                    }
-                    else
-                    {
-                        return "Failed to delete data";
-                    }
+                    return "Data deleted successfully";
                 }
             }
         }
@@ -274,16 +249,7 @@ namespace TrainSystem.Controller
                     myReader.Close();
                     mycon.Close();
 
-                    int rowsAffected = myCommand.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
-                    {
-                        return "Data added successfully";
-                    }
-                    else
-                    {
-                        return "Failed to add data";
-                    }
+                    return "Data added successfully";
                 }
             }
         }
@@ -292,7 +258,7 @@ namespace TrainSystem.Controller
         [HttpPut]
         public string UpdateParkingLotDensityRecord(ParkingLotDensity data)
         {
-            string query = @"update density_parkinglot_new set status = @status where user_id = @user_id and parking_id = @parking_id";
+            string query = @"update density_parkinglot_new set parking_id = @parking_id, status = @status where user_id = @user_id";
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
@@ -308,16 +274,7 @@ namespace TrainSystem.Controller
                     myReader.Close();
                     mycon.Close();
 
-                    int rowsAffected = myCommand.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
-                    {
-                        return "Data updated successfully";
-                    }
-                    else
-                    {
-                        return "Failed to update data";
-                    }
+                    return "Data updated successfully";
                 }
             }
         }
@@ -340,16 +297,7 @@ namespace TrainSystem.Controller
                     myReader.Close();
                     mycon.Close();
 
-                    int rowsAffected = myCommand.ExecuteNonQuery();
-
-                    if (rowsAffected > 0)
-                    {
-                        return "Data deleted successfully";
-                    }
-                    else
-                    {
-                        return "Failed to delete data";
-                    }
+                    return "Data deleted successfully";
                 }
             }
         }
