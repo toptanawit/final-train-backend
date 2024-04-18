@@ -184,6 +184,17 @@ namespace TrainSystem.Controller
         [HttpPost]
         public JsonResult CalculateStaionDensity(string station_id, string station_linecolor)
         {
+            if (station_linecolor == "orange")
+            {
+                var jsonData1 = new
+                {
+                    station_id = station_id,
+                    result = "out of service",
+                };
+
+                return new JsonResult(jsonData1);
+            }
+
             string query = @"select * from density_station_new where station_id = @station_id and status = true";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
