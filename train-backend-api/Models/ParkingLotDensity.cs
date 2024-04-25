@@ -9,7 +9,6 @@ namespace TrainSystem.Models
     {
         public string user_id { get; set; }
         public string parking_id { get; set; }
-        public string vehicle { get; set; }
         public bool status { get; set; }
     }
 }

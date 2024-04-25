@@ -39,71 +39,6 @@ namespace TrainSystem.Controller
             { "lightred", 288 } // 18 * 2 * 4 * 2
         };
 
-        /*
-        [Route("station-density")]
-        [HttpPost]
-        public bool GetStationDensity(Station station)
-        {
-            string query = @"select * from density_station where station_id = @station_id and is_near = true";
-            DataTable table = new DataTable();
-            string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
-            MySqlDataReader myReader;
-            using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
-            {
-                mycon.Open();
-                using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
-                {
-                    myCommand.Parameters.AddWithValue("@station_id", station.StationId);
-                    myReader = myCommand.ExecuteReader();
-                    table.Load(myReader);
-
-                    myReader.Close();
-                    mycon.Close();
-                }
-            }
-
-            double userLatitude = (double)table.Rows[0][3];
-            double userLongitude = (double)table.Rows[0][4];
-            double targetLatitude = station.Latitude;
-            double targetLongitude = station.Longitude;
-            double earthRadius = 6371; // Earth's radius in kilometers
-
-            // Check if user is near the target coordinates
-            bool isNear = IsNearLocation(userLatitude, userLongitude, targetLatitude, targetLongitude, earthRadius);
-
-            // Function to check if user is near a location using Haversine formula
-            static bool IsNearLocation(double userLat, double userLon, double targetLat, double targetLon, double radius)
-            {
-                // Convert latitude and longitude from degrees to radians
-                double dLat = ToRadians(targetLat - userLat);
-                double dLon = ToRadians(targetLon - userLon);
-
-                // Convert latitude coordinates to radians
-                userLat = ToRadians(userLat);
-                targetLat = ToRadians(targetLat);
-
-                // Calculate Haversine formula
-                double a = Math.Sin(dLat / 2) * Math.Sin(dLat / 2) +
-                           Math.Sin(dLon / 2) * Math.Sin(dLon / 2) * Math.Cos(userLat) * Math.Cos(targetLat);
-                double c = 2 * Math.Atan2(Math.Sqrt(a), Math.Sqrt(1 - a));
-                double distance = radius * c * 1000; // Distance in meters
-
-                // Check if distance is within a certain threshold (e.g., 100 meters)
-                double thresholdMeters = 100; // Change this threshold as needed
-                return distance <= thresholdMeters;
-            }
-
-            // Function to convert degrees to radians
-            static double ToRadians(double degrees)
-            {
-                return degrees * Math.PI / 180;
-            }
-
-            
-            return isNear;
-        }
-        */
-
         // station
         [Route("station-add")]
         [HttpPost]
@@ -243,7 +178,7 @@ namespace TrainSystem.Controller
         [HttpPost]
         public string AddParkingLotDensityRecord(ParkingLotDensity data)
         {
-            string query = @"insert into density_parkinglot_new (user_id, parking_id, vehicle, status) values (@user_id, @parking_id, @vehicle, @status)";
+            string query = @"insert into density_parkinglot_new (user_id, parking_id, status) values (@user_id, @parking_id, @status)";
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
@@ -253,7 +188,6 @@ namespace TrainSystem.Controller
                 {
                     myCommand.Parameters.AddWithValue("@user_id", data.user_id);
                     myCommand.Parameters.AddWithValue("@parking_id", data.parking_id);
-                    myCommand.Parameters.AddWithValue("@vehicle", data.vehicle);
                     myCommand.Parameters.AddWithValue("@status", data.status);
                     myReader = myCommand.ExecuteReader();
 
@@ -315,9 +249,9 @@ namespace TrainSystem.Controller
 
         [Route("parkinglot-calculate-density")]
         [HttpPost]
-        public JsonResult CalculateParkingLotDensity(string parking_id, int lot, string vehicle)
+        public JsonResult CalculateParkingLotDensity(string parking_id, int lot)
         {
-            string query = @"select * from density_parkinglot_new where parking_id = @parking_id and vehicle = @vehicle and status = true";
+            string query = @"select * from density_parkinglot_new where parking_id = @parking_id and status = true";
             DataTable table = new DataTable();
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
@@ -327,7 +261,6 @@ namespace TrainSystem.Controller
                 using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
                 {
                     myCommand.Parameters.AddWithValue("@parking_id", parking_id);
-                    myCommand.Parameters.AddWithValue("@vehicle", vehicle);
                     myReader = myCommand.ExecuteReader();
                     table.Load(myReader);
 
@@ -356,7 +289,6 @@ namespace TrainSystem.Controller
             var jsonData = new
             {
                 parking_id = parking_id,
-                vehicle = vehicle,
                 result = result,
             };
 
