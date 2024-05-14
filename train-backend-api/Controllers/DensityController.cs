@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using MySql.Data.MySqlClient;
+using MySqlX.XDevAPI.Relational;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -25,6 +26,109 @@ namespace TrainSystem.Controller
             _configuration = configuration;
         }
 
+        // for testing
+        [Route("testservicedb")]
+        [HttpGet]
+        public JsonResult GetJsonResult()
+        {
+            DataTable table = new DataTable();
+            string query = @"select * from density_station_new";
+            string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
+            MySqlDataReader myReader;
+            using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
+            {
+                mycon.Open();
+                using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+
+                    myReader.Close();
+                    mycon.Close();
+
+                    return new JsonResult(table);
+                }
+            }
+        }
+
+        [Route("testservicedb2")]
+        [HttpGet]
+        public JsonResult GetJsonResult2()
+        {
+            DataTable table = new DataTable();
+            string query = @"select * from density_parkinglot_new";
+            string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
+            MySqlDataReader myReader;
+            using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
+            {
+                mycon.Open();
+                using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                {
+                    myReader = myCommand.ExecuteReader();
+                    table.Load(myReader);
+
+                    myReader.Close();
+                    mycon.Close();
+
+                    return new JsonResult(table);
+                }
+            }
+        }
+
+        [Route("testdeleteall")]
+        [HttpPost]
+        public string DeleteAllRecords(string keyword)
+        {
+            if (keyword != "cleardata")
+            {
+                return "Data still hasn't been deleted";
+            }
+
+            string query = "delete from density_station_new";
+            string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
+            MySqlDataReader myReader;
+            using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
+            {
+                mycon.Open();
+                using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                {
+                    myReader = myCommand.ExecuteReader();
+
+                    myReader.Close();
+                    mycon.Close();
+
+                    return "Deleted all data successfully";
+                }
+            }
+        }
+
+        [Route("testdeleteall2")]
+        [HttpPost]
+        public string DeleteAllRecords2(string keyword)
+        {
+            if (keyword != "cleardata")
+            {
+                return "Data still hasn't been deleted";
+            }
+
+            string query = "delete from density_parkinglot_new";
+            string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
+            MySqlDataReader myReader;
+            using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
+            {
+                mycon.Open();
+                using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                {
+                    myReader = myCommand.ExecuteReader();
+
+                    myReader.Close();
+                    mycon.Close();
+
+                    return "Deleted all data successfully";
+                }
+            }
+        }
+
         public Dictionary<string, int> AvgMaxPopulation = new Dictionary<string, int>()
         {
             { "lightgreen", 256 }, // 16 * 2 * 4 * 2 (door * door side * avg passenger/side * station side)
@@ -44,23 +148,43 @@ namespace TrainSystem.Controller
         [HttpPost]
         public string AddStationDensityRecord(StationDensity data)
         {
+            DataTable table = new DataTable();
+            string selectquery = @"select * from density_station_new where user_id = @user_id and station_id = @station_id";
             string query = @"insert into density_station_new (user_id, station_id, status) values (@user_id, @station_id, @status)";
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
             {
                 mycon.Open();
-                using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                using (MySqlCommand selectcommand = new MySqlCommand(selectquery, mycon))
                 {
-                    myCommand.Parameters.AddWithValue("@user_id", data.user_id);
-                    myCommand.Parameters.AddWithValue("@station_id", data.station_id);
-                    myCommand.Parameters.AddWithValue("@status", data.status);
-                    myReader = myCommand.ExecuteReader();
+                    selectcommand.Parameters.AddWithValue("@user_id", data.user_id);
+                    selectcommand.Parameters.AddWithValue("@station_id", data.station_id);
+                    myReader = selectcommand.ExecuteReader();
+                    table.Load(myReader);
 
-                    myReader.Close();
-                    mycon.Close();
+                    if (table.Rows.Count == 0)
+                    {
+                        using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                        {
+                            myCommand.Parameters.AddWithValue("@user_id", data.user_id);
+                            myCommand.Parameters.AddWithValue("@station_id", data.station_id);
+                            myCommand.Parameters.AddWithValue("@status", data.status);
+                            myReader = myCommand.ExecuteReader();
 
-                    return "Data added successfully";
+                            myReader.Close();
+                            mycon.Close();
+
+                            return "Data added successfully";
+                        }
+                    }
+                    else
+                    {
+                        myReader.Close();
+                        mycon.Close();
+
+                        return UpdateStationDensityRecord(data);
+                    }
                 }
             }
         }
@@ -69,7 +193,7 @@ namespace TrainSystem.Controller
         [HttpPut]
         public string UpdateStationDensityRecord(StationDensity data)
         {
-            string query = @"update density_station_new set station_id = @station_id, status = @status where user_id = @user_id";
+            string query = @"update density_station_new set status = @status where user_id = @user_id and station_id = @station_id";
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
@@ -94,7 +218,7 @@ namespace TrainSystem.Controller
         [HttpDelete]
         public string DeleteStationDensityRecord(StationDensity data)
         {
-            string query = @"delete from density_station_new where user_id = @user_id";
+            string query = @"delete from density_station_new where user_id = @user_id and station_id = @station_id";
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
@@ -103,12 +227,11 @@ namespace TrainSystem.Controller
                 using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
                 {
                     myCommand.Parameters.AddWithValue("@user_id", data.user_id);
+                    myCommand.Parameters.AddWithValue("@station_id", data.station_id);
                     myReader = myCommand.ExecuteReader();
 
                     myReader.Close();
                     mycon.Close();
-
-                    int rowsAffected = myCommand.ExecuteNonQuery();
 
                     return "Data deleted successfully";
                 }
@@ -178,23 +301,43 @@ namespace TrainSystem.Controller
         [HttpPost]
         public string AddParkingLotDensityRecord(ParkingLotDensity data)
         {
+            DataTable table = new DataTable();
+            string selectquery = @"select * from density_parkinglot_new where user_id = @user_id and parking_id = @parking_id";
             string query = @"insert into density_parkinglot_new (user_id, parking_id, status) values (@user_id, @parking_id, @status)";
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
             {
                 mycon.Open();
-                using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                using (MySqlCommand selectcommand = new MySqlCommand(selectquery, mycon))
                 {
-                    myCommand.Parameters.AddWithValue("@user_id", data.user_id);
-                    myCommand.Parameters.AddWithValue("@parking_id", data.parking_id);
-                    myCommand.Parameters.AddWithValue("@status", data.status);
-                    myReader = myCommand.ExecuteReader();
+                    selectcommand.Parameters.AddWithValue("@user_id", data.user_id);
+                    selectcommand.Parameters.AddWithValue("@parking_id", data.parking_id);
+                    myReader = selectcommand.ExecuteReader();
+                    table.Load(myReader);
 
-                    myReader.Close();
-                    mycon.Close();
+                    if (table.Rows.Count == 0)
+                    {
+                        using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
+                        {
+                            myCommand.Parameters.AddWithValue("@user_id", data.user_id);
+                            myCommand.Parameters.AddWithValue("@parking_id", data.parking_id);
+                            myCommand.Parameters.AddWithValue("@status", data.status);
+                            myReader = myCommand.ExecuteReader();
 
-                    return "Data added successfully";
+                            myReader.Close();
+                            mycon.Close();
+
+                            return "Data added successfully";
+                        }
+                    }
+                    else
+                    {
+                        myReader.Close();
+                        mycon.Close();
+
+                        return UpdateParkingLotDensityRecord(data);
+                    }
                 }
             }
         }
@@ -203,7 +346,7 @@ namespace TrainSystem.Controller
         [HttpPut]
         public string UpdateParkingLotDensityRecord(ParkingLotDensity data)
         {
-            string query = @"update density_parkinglot_new set parking_id = @parking_id, status = @status where user_id = @user_id";
+            string query = @"update density_parkinglot_new set status = @status where user_id = @user_id and parking_id = @parking_id";
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
@@ -228,7 +371,7 @@ namespace TrainSystem.Controller
         [HttpDelete]
         public string DeleteParkingLotDensityRecord(ParkingLotDensity data)
         {
-            string query = @"delete from density_parkinglot_new where user_id = @user_id";
+            string query = @"delete from density_parkinglot_new where user_id = @user_id and parking_id = @parking_id";
             string sqlDataSource = _configuration.GetConnectionString("TrainAppCon");
             MySqlDataReader myReader;
             using (MySqlConnection mycon = new MySqlConnection(sqlDataSource))
@@ -237,6 +380,7 @@ namespace TrainSystem.Controller
                 using (MySqlCommand myCommand = new MySqlCommand(query, mycon))
                 {
                     myCommand.Parameters.AddWithValue("@user_id", data.user_id);
+                    myCommand.Parameters.AddWithValue("@parking_id", data.parking_id);
                     myReader = myCommand.ExecuteReader();
 
                     myReader.Close();
@@ -273,11 +417,11 @@ namespace TrainSystem.Controller
             int threshold = lot;
             string result = "no data";
 
-            if (passengers <= threshold / 2)
+            if (passengers <= threshold / 3)
             {
                 result = "low";
             }
-            else if (passengers <= threshold)
+            else if (passengers <= threshold * 2 / 3)
             {
                 result = "medium";
             }
